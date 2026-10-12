@@ -1,0 +1,6 @@
+import {createHmac,timingSafeEqual} from 'node:crypto';
+import {NextResponse} from 'next/server';
+export const runtime='nodejs';
+function token(password:string){return createHmac('sha256',password).update('serena-admin-session-v1').digest('hex')}
+export async function POST(request:Request){const configured=process.env.ADMIN_PASSWORD;if(!configured||configured.length<12||configured==='altere-esta-palavra-passe-123')return NextResponse.json({error:'Configure ADMIN_PASSWORD no ficheiro .env.local com pelo menos 12 caracteres.'},{status:503});const body=await request.json().catch(()=>({}));const provided=String(body.password||'');const a=Buffer.from(provided);const b=Buffer.from(configured);if(a.length!==b.length||!timingSafeEqual(a,b))return NextResponse.json({error:'Palavra-passe incorreta.'},{status:401});const response=NextResponse.json({ok:true});response.cookies.set('serena_admin',token(configured),{httpOnly:true,sameSite:'strict',secure:process.env.NODE_ENV==='production',path:'/',maxAge:60*60*8});return response}
+export async function DELETE(){const response=NextResponse.json({ok:true});response.cookies.set('serena_admin','',{httpOnly:true,sameSite:'strict',secure:process.env.NODE_ENV==='production',path:'/',maxAge:0});return response}

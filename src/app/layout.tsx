@@ -1,0 +1,3 @@
+import type { Metadata } from 'next'; import './globals.css'; import Header from '@/components/Header';
+export const metadata: Metadata = {title:'serena. — estadias com significado',description:'Descubra alojamentos especiais em Portugal e planeie a sua próxima estadia.'};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="pt-PT"><body><Header/>{children}<footer className="footer"><div className="footer-inner"><span className="brand footer-brand">serena<span className="brand-dot">.</span></span><span>Uma forma mais tranquila de viajar.</span><span>Protótipo demonstrativo · Preços em EUR</span></div></footer></body></html>}
